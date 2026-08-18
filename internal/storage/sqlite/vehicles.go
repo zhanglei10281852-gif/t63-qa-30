@@ -35,9 +35,8 @@ func (s *queryStore) ListVehicles(ctx context.Context, filter repository.Vehicle
 		args = append(args, value, value)
 	}
 	clause := strings.Join(where, " AND ")
-	queryContext := context.WithoutCancel(ctx)
 	var total int
-	if err := s.e.QueryRowContext(queryContext, "SELECT COUNT(*) FROM vehicles WHERE "+clause, args...).Scan(&total); err != nil {
+	if err := s.e.QueryRowContext(ctx, "SELECT COUNT(*) FROM vehicles WHERE "+clause, args...).Scan(&total); err != nil {
 		return pagination.Result[vehicle.Vehicle]{}, err
 	}
 	sort := "updated_at"
@@ -53,7 +52,7 @@ func (s *queryStore) ListVehicles(ctx context.Context, filter repository.Vehicle
 	}
 	query := fmt.Sprintf("SELECT %s FROM vehicles WHERE %s ORDER BY %s %s LIMIT ? OFFSET ?", vehicleColumns, clause, sort, direction)
 	args = append(args, page.Limit, page.Offset)
-	rows, err := s.e.QueryContext(queryContext, query, args...)
+	rows, err := s.e.QueryContext(ctx, query, args...)
 	if err != nil {
 		return pagination.Result[vehicle.Vehicle]{}, err
 	}
