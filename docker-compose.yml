@@ -1,0 +1,20 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SANITATION_HTTP_ADDRESS: ":8653"
+      SANITATION_DATABASE_URL: "file:/var/lib/sanitation/sanitation.db"
+      SANITATION_WORKER_INTERVAL: "5"
+      SANITATION_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      SANITATION_BOOTSTRAP_ADMIN_PASSWORD: "local-admin-only"
+      SANITATION_BOOTSTRAP_ADMIN_NAME: "Local Administrator"
+    ports:
+      - "8653:8653"
+    volumes:
+      - sanitation-data:/var/lib/sanitation
+    restart: unless-stopped
+
+volumes:
+  sanitation-data:
